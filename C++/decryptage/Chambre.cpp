@@ -13,7 +13,9 @@ Chambre::Chambre()
 	else  // sinon
 		cerr << "Impossible d'ouvrir le fichier !" << endl;
 
-	value("CO2");
+	// Obtention des valeurs
+
+  value("CO2");
   value("FALL");
   value("MTH02");
   value("USER");
@@ -22,7 +24,7 @@ Chambre::Chambre()
   value("TV");
   value("USER");
   
-  display();
+  display(); // Affichage des données
 }
 
 Chambre::~Chambre()
@@ -32,28 +34,28 @@ Chambre::~Chambre()
 
 void Chambre::value(string id)
 {
-    int id_pos = contenu.find(id);
-    int begin = contenu.find(':',id_pos);
-    int finish = contenu.find(',', begin);
+    int id_pos = contenu.find(id); // position dans le string du début nom de la valeur recherché
+    int begin = contenu.find(':',id_pos); // Position du début de la valeur pour l'id qui correspond
+    int finish = contenu.find(',', begin);// Position de fin de la valeur pour l'id qui correspond
 
-    string value = contenu.substr(begin+1,(finish-begin)-1);
+    string value = contenu.substr(begin+1,(finish-begin)-1); // On extrait alors la valeur de l'id grâce au valeur précédente
 
   	if ( id == "CO2")
   	{
-  		CO2 = atoi(value.c_str());
+  		CO2 = atoi(value.c_str()); // C'est un int, un atoi() suffit à extraire la valeur
   	}
   	else if( id == "FALL")
   	{
-      FALL = atoi(value.c_str());
+      FALL = atoi(value.c_str()); // Idem que pour CO2
   	}
   	else if( id == "MTH02")
   	{
       value = value.substr(1,24);
-      string temp_bin = value.substr(0,16);
+      string temp_bin = value.substr(0,16); // On prend le binaire de la temp
 
       int puissance = 15;
 
-      for(int i=0; i<16; i++)
+      for(int i=0; i<16; i++) // Transformation du binaire en décimal
       {
         if(temp_bin[i] == '1')
         {
@@ -62,7 +64,7 @@ void Chambre::value(string id)
         puissance--;  
       }
 
-      string deci_bin = value.substr(16,8);
+      string deci_bin = value.substr(16,8); // on fait pareille pour l'humidité
       puissance = 7;
 
       for(int j=0; j<8; j++)
@@ -89,20 +91,22 @@ void Chambre::value(string id)
   	}
   	else if( id =="TIME")
   	{
-      string integer = value.substr(0, value.length() - 3);
+      
+      // Extraction du timestamp
+      string integer = value.substr(0, value.length() - 3); 
       string decimal = value.substr(10,3);
       double seconde = atof(integer.c_str());
       seconde = seconde + atof(decimal.c_str()) * (pow(10,-3));
 
-      timeStampToReadable(seconde);
+      timeStampToReadable(seconde); // conversion du timestamp à une valeur lisible
   	}
   	else if ( id == "TV")
     {
-      TV = value.substr(1, value.length() -2);
+      TV = value.substr(1, value.length() -2); // Extration de la valeur de TV
     }
     else if ( id == "USER")
   	{
-      USER = value.substr(1, value.length() -3);
+      USER = value.substr(1, value.length() -3); // Idem que TV
   	}
 }
 
@@ -116,10 +120,13 @@ void Chambre::display()
 
 void Chambre::timeStampToReadable(double seconde)
 {
-  int nb_seconde_annee = 31557600;
-  int nb_seconde_jour = 86400;
+  
+  // La fonction du génie qui marche pas. J'ai pas la bonne heure... problème de précision je sais pas où
 
-  int nb_annee_ecoule = round(seconde/nb_seconde_annee);
+  int nb_seconde_annee = 31557600; // Nombre de seconde dans une année
+  int nb_seconde_jour = 86400; // Nombre de seconde dans un jour
+
+  int nb_annee_ecoule = round(seconde/nb_seconde_annee); 
   int annee = nb_annee_ecoule + 1970;
   
   double seconde_annee_rest = seconde - (nb_annee_ecoule*nb_seconde_annee);
